@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>協同產品設計實習 - w2</title><link href="./" rel="alternate"></link><link href="./feeds/w2.atom.xml" rel="self"></link><id>./</id><updated>2024-03-08T14:00:00+08:00</updated><entry><title>2024 Spring 課程</title><link href="./2024-Spring-w2-blog-tutorial.html" rel="alternate"></link><published>2024-03-08T14:00:00+08:00</published><updated>2024-03-08T07:34:23+08:00</updated><author><name>40923116</name></author><id>tag:None,2024-03-08:./2024-Spring-w2-blog-tutorial.html</id><summary type="html">&lt;p&gt;2024 利用 codespaces 維護分組網站.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>協同產品設計實習 - w2</title><link href="./" rel="alternate"></link><link href="./feeds/w2.atom.xml" rel="self"></link><id>./</id><updated>2024-03-08T14:00:00+08:00</updated><entry><title>2024 Spring 課程</title><link href="./2024-Spring-w2-blog-tutorial.html" rel="alternate"></link><published>2024-03-08T14:00:00+08:00</published><updated>2024-03-08T07:56:17+08:00</updated><author><name>40923116</name></author><id>tag:None,2024-03-08:./2024-Spring-w2-blog-tutorial.html</id><summary type="html">&lt;p&gt;2024 利用 codespaces 維護分組網站.&lt;/p&gt;
 </summary><content type="html">&lt;p&gt;2024 利用 codespaces 維護分組網站.&lt;/p&gt;
 
 
 &lt;h1&gt;利用 codespaces 維護分組網站&lt;/h1&gt;
 &lt;p&gt;分組利用github去試推與test到分組網站&lt;/p&gt;
 &lt;p&gt;學習到協同不一樣的技能&lt;/p&gt;
+&lt;hr&gt;
 &lt;p&gt;引用網站網址連結的方法:&lt;/p&gt;
 &lt;p&gt;&lt;a href="https://github.com/mdecycu/cmsimde_site"&gt;cmsimde_site&lt;/a&gt; - 在文章中多次引用同一個網站連結時, 可以使用此種方法.&lt;/p&gt;
 &lt;p&gt;&lt;a href="https://github.com/mdecycu/cmsimde_site"&gt;https://github.com/mdecycu/cmsimde_site&lt;/a&gt; - 假如想要快速將網址套用 html 網站連結, 可以使用此種方法.&lt;/p&gt;
