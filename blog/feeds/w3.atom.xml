@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>協同產品設計實習 - w3</title><link href="./" rel="alternate"></link><link href="./feeds/w3.atom.xml" rel="self"></link><id>./</id><updated>2024-03-22T06:11:56+08:00</updated><entry><title>2024 Spring 課程w3</title><link href="./2024-Spring-w3-blog-tutorial.html" rel="alternate"></link><published>2024-03-15T14:00:00+08:00</published><updated>2024-03-22T06:11:56+08:00</updated><author><name>40923116</name></author><id>tag:None,2024-03-15:./2024-Spring-w3-blog-tutorial.html</id><summary type="html">&lt;p&gt;製作及統整上課影片.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>協同產品設計實習 - w3</title><link href="./" rel="alternate"></link><link href="./feeds/w3.atom.xml" rel="self"></link><id>./</id><updated>2024-03-22T06:18:00+08:00</updated><entry><title>2024 Spring 課程w3</title><link href="./2024-Spring-w3-blog-tutorial.html" rel="alternate"></link><published>2024-03-15T14:00:00+08:00</published><updated>2024-03-22T06:18:00+08:00</updated><author><name>40923116</name></author><id>tag:None,2024-03-15:./2024-Spring-w3-blog-tutorial.html</id><summary type="html">&lt;p&gt;製作及統整上課影片.&lt;/p&gt;
 </summary><content type="html">&lt;p&gt;製作及統整上課影片.&lt;/p&gt;
 
 
 &lt;h1&gt;利用capcut去製作上課影片&lt;/h1&gt;
 &lt;p&gt;利用剪接軟體capcut去製作及統整上課影片，並上字幕。&lt;/p&gt;
-&lt;p&gt;學習到協同不一樣的技能&lt;/p&gt;
-&lt;p&gt;&lt;img alt="image" src="image.png"&gt;&lt;/p&gt;
 &lt;hr&gt;
 &lt;p&gt;引用網站網址連結的方法:&lt;/p&gt;
 &lt;p&gt;&lt;a href="https://github.com/mdecycu/cmsimde_site"&gt;cmsimde_site&lt;/a&gt; - 在文章中多次引用同一個網站連結時, 可以使用此種方法.&lt;/p&gt;
