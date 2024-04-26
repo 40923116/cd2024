@@ -5,28 +5,28 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>./</loc>
-<lastmod>2024-04-17T06:23:34-00:00</lastmod>
+<lastmod>2024-04-26T06:25:30-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>./archives.html</loc>
-<lastmod>2024-04-17T06:23:34-00:00</lastmod>
+<lastmod>2024-04-26T06:25:30-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>./tags.html</loc>
-<lastmod>2024-04-17T06:23:34-00:00</lastmod>
+<lastmod>2024-04-26T06:25:30-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>./categories.html</loc>
-<lastmod>2024-04-17T06:23:34-00:00</lastmod>
+<lastmod>2024-04-26T06:25:30-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -34,6 +34,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>./pages/about/</loc>
 <lastmod>2024-03-01T06:09:08+08:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>./2024-Spring-w5-blog-tutorial-40923116.html</loc>
+<lastmod>2024-04-26T06:23:34+08:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -95,6 +102,20 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>./category/w5-40923116.html</loc>
+<lastmod>2024-04-26T06:23:34+08:06</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>./tag/github-actions-dai-you-zi-mo-zu-de-mainyml-she-ding-40923116.html</loc>
+<lastmod>2024-04-26T06:23:34+08:06</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>./tag/jiang-zu-yuan-de-ge-ren-cang-chu-she-wei-fen-zu-cang-chu-zi-mo-zu-40923116.html</loc>
 <lastmod>2024-04-17T06:20:33+08:06</lastmod>
 <changefreq>daily</changefreq>
@@ -131,7 +152,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>./author/40923116.html</loc>
-<lastmod>2024-04-17T06:23:04+08:06</lastmod>
+<lastmod>2024-04-26T06:23:34+08:06</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
