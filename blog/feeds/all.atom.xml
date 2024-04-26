@@ -1,5 +1,754 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>協同產品設計實習</title><link href="./" rel="alternate"></link><link href="./feeds/all.atom.xml" rel="self"></link><id>./</id><updated>2024-04-26T06:23:34+08:00</updated><entry><title>2024 Spring 課程w5</title><link href="./2024-Spring-w5-blog-tutorial-40923116.html" rel="alternate"></link><published>2024-03-29T14:00:00+08:00</published><updated>2024-04-26T06:23:34+08:00</updated><author><name>40923116</name></author><id>tag:None,2024-03-29:./2024-Spring-w5-blog-tutorial-40923116.html</id><summary type="html">&lt;p&gt;Github Actions 帶有子模組的 main.yml 設定.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>協同產品設計實習</title><link href="./" rel="alternate"></link><link href="./feeds/all.atom.xml" rel="self"></link><id>./</id><updated>2024-04-26T14:00:00+08:00</updated><entry><title>2024 Spring 課程w7</title><link href="./2024-Spring-w7-blog-tutorial-40923116.html" rel="alternate"></link><published>2024-04-26T14:00:00+08:00</published><updated>2024-04-26T06:49:12+08:00</updated><author><name>40923116</name></author><id>tag:None,2024-04-26:./2024-Spring-w7-blog-tutorial-40923116.html</id><summary type="html">&lt;p&gt;協同產品設計實習的專案實習, 透過 ChatGPT、Gemini 1.5 Pro 與 Claude 3 的協助下進行.&lt;/p&gt;
+</summary><content type="html">&lt;p&gt;協同產品設計實習的專案實習, 透過 ChatGPT、Gemini 1.5 Pro 與 Claude 3 的協助下進行.&lt;/p&gt;
+
+
+&lt;h1&gt;協同資料處理&lt;/h1&gt;
+&lt;p&gt;請各班各組根據 2a_cd2024_midterm.csv, 以及 2b_cd2024_midterm.csv 中的學號、Github 帳號與組別, 設法在各組員與分組網站中, 列出各學員的 cd2024 倉儲、網站, 以及各班各組的期中報告倉儲與網站連結.&lt;/p&gt;
+&lt;p&gt;過程中, 請詳細說明各組及學員的倉儲與網站中的連結資料如何建立? 手動輸入? 利用程式進行處理? 或者採分工合作方式建立?&lt;/p&gt;
+&lt;p&gt;2b step1 取出資料放入數列&lt;/p&gt;
+&lt;h1&gt;鋼球平衡台 PID 控制與模擬&lt;/h1&gt;
+&lt;p&gt;請下載 cd2024_ball_balancing_platform_control_ref.7z, 閱讀後請將摘要內容放入個人與分組網誌中.&lt;/p&gt;
+&lt;p&gt;對 Gemini 1.5 Pro 提問:&lt;/p&gt;
+&lt;p&gt;以下為利用 PID 控制 CoppeliaSim 鋼球平衡台場景的 ZMQ RemoteAPI Python 程式, 請利用 Python 模組將系統控制過程, 鋼球在平衡台上的 x 方向座標與 y 方向, 利用 matplotlib 畫出來. "這裡附上原本的 PID 控制程式碼"&lt;/p&gt;
+&lt;p&gt;回答:&lt;/p&gt;
+&lt;p&gt;1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99&lt;/p&gt;
+&lt;h1&gt;導入必要的模組&lt;/h1&gt;
+&lt;h1&gt;pip install pyzmq cbor keyboard matplotlib&lt;/h1&gt;
+&lt;p&gt;import matplotlib.pyplot as plt
+from zmqRemoteApi_IPv6 import RemoteAPIClient
+import keyboard&lt;/p&gt;
+&lt;h1&gt;利用 zmqRemoteAPI 以 23000 對場景伺服器進行連線&lt;/h1&gt;
+&lt;p&gt;client = RemoteAPIClient('localhost', 23000)&lt;/p&gt;
+&lt;p&gt;print('Program started')
+sim = client.getObject('sim')&lt;/p&gt;
+&lt;h1&gt;Get the handles of the ball, motorx, and motory objects&lt;/h1&gt;
+&lt;p&gt;ball_handle = sim.getObject('/ball')
+motorx_handle = sim.getObject('/motorx')
+motory_handle = sim.getObject('/motory')&lt;/p&gt;
+&lt;h1&gt;PID control constants for x and y coordinates&lt;/h1&gt;
+&lt;p&gt;kp_x = 1.0  # Proportional gain for x
+ki_x = 0.1  # Integral gain for x
+kd_x = 0.5  # Derivative gain for x&lt;/p&gt;
+&lt;p&gt;kp_y = 1.0  # Proportional gain for y
+ki_y = 0.1  # Integral gain for y
+kd_y = 0.5  # Derivative gain for y&lt;/p&gt;
+&lt;h1&gt;Initialize error and integral terms for x and y coordinates&lt;/h1&gt;
+&lt;p&gt;error_sum_x = 0.0
+last_error_x = 0.0&lt;/p&gt;
+&lt;p&gt;error_sum_y = 0.0
+last_error_y = 0.0&lt;/p&gt;
+&lt;h1&gt;建立用於儲存 x 和 y 座標的列表&lt;/h1&gt;
+&lt;p&gt;x_coordinates = []
+y_coordinates = []&lt;/p&gt;
+&lt;p&gt;sim.startSimulation()
+print('Simulation started')&lt;/p&gt;
+&lt;h1&gt;Function to get the ball's x and y coordinates&lt;/h1&gt;
+&lt;p&gt;def getBallCoordinates():
+    pos = sim.getObjectPosition(ball_handle, -1)
+    x = pos[0]
+    y = pos[1]
+    return x, y&lt;/p&gt;
+&lt;p&gt;def controlMotor(target_x, target_y, dt):
+    global error_sum_x, last_error_x, error_sum_y, last_error_y&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="c1"&gt;# Get the current ball coordinates&lt;/span&gt;
+&lt;span class="n"&gt;current_x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;current_y&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;getBallCoordinates&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Target: (&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;target_x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;,&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;target_y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;), Current: (&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;current_x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;,&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;current_y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;)&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Calculate errors for x and y coordinates&lt;/span&gt;
+&lt;span class="n"&gt;error_x&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;target_x&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;current_x&lt;/span&gt;
+&lt;span class="n"&gt;error_y&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;target_y&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;current_y&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Update error sums for x and y coordinates&lt;/span&gt;
+&lt;span class="n"&gt;error_sum_x&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;+=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;error_x&lt;/span&gt;
+&lt;span class="n"&gt;error_sum_y&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;+=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;error_y&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Calculate derivatives for x and y coordinates&lt;/span&gt;
+&lt;span class="n"&gt;derivative_x&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;error_x&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;last_error_x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;dt&lt;/span&gt;
+&lt;span class="n"&gt;derivative_y&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;error_y&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;last_error_y&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;dt&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Calculate control signals for x and y coordinates&lt;/span&gt;
+&lt;span class="n"&gt;control_signal_x&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;kp_x&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;error_x&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;ki_x&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;error_sum_x&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;kd_x&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;derivative_x&lt;/span&gt;
+&lt;span class="n"&gt;control_signal_y&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;kp_y&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;error_y&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;ki_y&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;error_sum_y&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;kd_y&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;derivative_y&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Set the rotational angles of motorx and motory&lt;/span&gt;
+&lt;span class="n"&gt;sim&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;setJointTargetPosition&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;motorx_handle&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;control_signal_x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;sim&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;setJointTargetPosition&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;motory_handle&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;control_signal_y&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Update the last errors for x and y coordinates&lt;/span&gt;
+&lt;span class="n"&gt;last_error_x&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;error_x&lt;/span&gt;
+&lt;span class="n"&gt;last_error_y&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;error_y&lt;/span&gt;
+
+&lt;span class="c1"&gt;# 儲存目前的 x 和 y 座標&lt;/span&gt;
+&lt;span class="n"&gt;x_coordinates&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;append&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;current_x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;y_coordinates&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;append&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;current_y&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;while True:
+    if keyboard.is_pressed('q'):
+        # Stop simulation
+        sim.stopSimulation()
+        break&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;# Control the motors to set the ball to the desired coordinates
+controlMotor(0.3, 0.3, 0.05)  # Adjust the time step (dt) and target coordinates as needed
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h1&gt;在模擬結束後繪製圖形&lt;/h1&gt;
+&lt;p&gt;plt.plot(x_coordinates, label='X Coordinate')
+plt.plot(y_coordinates, label='Y Coordinate')
+plt.xlabel('Time')
+plt.ylabel('Coordinate')
+plt.title('Ball Position on Balancing Platform')
+plt.legend()
+plt.show()
+實習步驟:&lt;/p&gt;
+&lt;p&gt;開啟可攜程式系統中的 CoppeliaSim
+開啟鋼球平衡台模擬場景
+啟動可攜程式系統, pip install keyboard cbor pyzmq matplotlib
+在 SciTE 中執行上列程式, 確定系統穩定後, 按下 q 終止模擬
+matplotlib 將畫出鋼球在平台上的 x 與 y 座標圖&lt;/p&gt;
+&lt;p&gt;其他控制模擬參考資料: ball_beam_balancing_PID_control_coppeliasim_1d_and_2d_cd2024_w9.7z&lt;/p&gt;
+&lt;p&gt;若希望在不同電腦硬體上取得相同的 CoppeliaSim 場景控制模擬結果:&lt;/p&gt;
+&lt;p&gt;1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111&lt;/p&gt;
+&lt;h1&gt;導入必要的模組&lt;/h1&gt;
+&lt;h1&gt;pip install pyzmq cbor keyboard matplotlib&lt;/h1&gt;
+&lt;p&gt;import matplotlib.pyplot as plt
+from zmqRemoteApi_IPv6 import RemoteAPIClient
+import keyboard
+import os
+import random
+import numpy as np&lt;/p&gt;
+&lt;h1&gt;Setting a fixed random seed for reproducibility&lt;/h1&gt;
+&lt;p&gt;random.seed(42)  # Choose any fixed seed value&lt;/p&gt;
+&lt;h1&gt;利用 zmqRemoteAPI 以 23000 對場景伺服器進行連線&lt;/h1&gt;
+&lt;p&gt;client = RemoteAPIClient('localhost', 23000)&lt;/p&gt;
+&lt;p&gt;print('Program started')
+sim = client.getObject('sim')&lt;/p&gt;
+&lt;h1&gt;Get the handles of the ball, motorx, and motory objects&lt;/h1&gt;
+&lt;p&gt;ball_handle = sim.getObject('/ball')
+motorx_handle = sim.getObject('/motorx')
+motory_handle = sim.getObject('/motory')&lt;/p&gt;
+&lt;h1&gt;PID control constants for x and y coordinates&lt;/h1&gt;
+&lt;p&gt;kp_x = 1.8839  # Proportional gain for x
+ki_x = 0.1629  # Integral gain for x
+kd_x = 0.5787  # Derivative gain for x&lt;/p&gt;
+&lt;p&gt;kp_y = 1.8839  # Proportional gain for x
+ki_y = 0.1629  # Integral gain for x
+kd_y = 0.5787  # Derivative gain for x&lt;/p&gt;
+&lt;h1&gt;Initialize error and integral terms for x and y coordinates&lt;/h1&gt;
+&lt;p&gt;error_sum_x = 0.0
+last_error_x = 0.0&lt;/p&gt;
+&lt;p&gt;error_sum_y = 0.0
+last_error_y = 0.0&lt;/p&gt;
+&lt;h1&gt;建立用於儲存 x 和 y 座標的列表&lt;/h1&gt;
+&lt;p&gt;x_coordinates = []
+y_coordinates = []&lt;/p&gt;
+&lt;p&gt;sim.startSimulation()
+print('Simulation started')&lt;/p&gt;
+&lt;h1&gt;Function to get the ball's x and y coordinates&lt;/h1&gt;
+&lt;p&gt;def getBallCoordinates():
+    pos = sim.getObjectPosition(ball_handle, -1)
+    x = pos[0]
+    y = pos[1]
+    return x, y&lt;/p&gt;
+&lt;p&gt;def controlMotor(target_x, target_y, dt):
+    global error_sum_x, last_error_x, error_sum_y, last_error_y&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="c1"&gt;# Get the current simulation time&lt;/span&gt;
+&lt;span class="n"&gt;simulation_time&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;sim&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;getSimulationTime&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Adjust dt based on simulation time to account for potential slowdowns&lt;/span&gt;
+&lt;span class="n"&gt;adjusted_dt&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;dt&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;sim&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;getSimulationTimeStep&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mf"&gt;0.05&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Get the current ball coordinates&lt;/span&gt;
+&lt;span class="n"&gt;current_x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;current_y&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;getBallCoordinates&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Target: (&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;target_x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;,&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;target_y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;), Current: (&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;current_x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;,&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;current_y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;)&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Calculate errors for x and y coordinates&lt;/span&gt;
+&lt;span class="n"&gt;error_x&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;target_x&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;current_x&lt;/span&gt;
+&lt;span class="n"&gt;error_y&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;target_y&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;current_y&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Update error sums for x and y coordinates&lt;/span&gt;
+&lt;span class="n"&gt;error_sum_x&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;+=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;error_x&lt;/span&gt;
+&lt;span class="n"&gt;error_sum_y&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;+=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;error_y&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Calculate derivatives for x and y coordinates&lt;/span&gt;
+&lt;span class="n"&gt;derivative_x&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;error_x&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;last_error_x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;adjusted_dt&lt;/span&gt;
+&lt;span class="n"&gt;derivative_y&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;error_y&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;last_error_y&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;adjusted_dt&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Calculate control signals for x and y coordinates&lt;/span&gt;
+&lt;span class="n"&gt;control_signal_x&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;kp_x&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;error_x&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;ki_x&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;error_sum_x&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;kd_x&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;derivative_x&lt;/span&gt;
+&lt;span class="n"&gt;control_signal_y&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;kp_y&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;error_y&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;ki_y&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;error_sum_y&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;kd_y&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;derivative_y&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Set the rotational angles of motorx and motory&lt;/span&gt;
+&lt;span class="n"&gt;sim&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;setJointTargetPosition&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;motorx_handle&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;control_signal_x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;sim&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;setJointTargetPosition&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;motory_handle&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;control_signal_y&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Update the last errors for x and y coordinates&lt;/span&gt;
+&lt;span class="n"&gt;last_error_x&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;error_x&lt;/span&gt;
+&lt;span class="n"&gt;last_error_y&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;error_y&lt;/span&gt;
+
+&lt;span class="c1"&gt;# 儲存目前的 x 和 y 座標&lt;/span&gt;
+&lt;span class="n"&gt;x_coordinates&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;append&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;current_x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;y_coordinates&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;append&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;current_y&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;while True:
+    if keyboard.is_pressed('q'):
+        # Stop simulation
+        sim.stopSimulation()
+        break&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;# Control the motors to set the ball to the desired coordinates
+controlMotor(0.3, 0.3, 0.05)  # Adjust the time step (dt) and target coordinates as needed
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h1&gt;在模擬結束後繪製圖形&lt;/h1&gt;
+&lt;p&gt;plt.plot(x_coordinates, label='X Coordinate')
+plt.plot(y_coordinates, label='Y Coordinate')
+plt.xlabel('Time')
+plt.ylabel('Coordinate')
+plt.title('Ball Position on Balancing Platform')
+plt.legend()
+plt.show()
+adjusted_dt = dt * sim.getSimulationTimeStep() / 0.05 設定主要用於動態調整控制迴路的更新頻率, 使其與 CoppeliaSim 模擬的實際速度保持同步. 如此可減輕因硬體性能差異導致的模擬速度變化所帶來的影響, 進而提高在不同電腦上得到相對較為一致的結果.&lt;/p&gt;
+&lt;p&gt;工作原理：&lt;/p&gt;
+&lt;p&gt;模擬時間步長 (Simulation Time Step): CoppeliaSim 使用固定時間步長進行物理模擬. 這個時間步長決定了模擬推進和更新場景中物件的位置、速度和其他狀態的時間間隔. 實際的模擬時間步長可能因場景複雜性和硬體性能等因素而略有不同.
+控制迴路時序 (Control Loop Timing): Python 程式中的控制迴路以一定的頻率運行，由 dt 值（原始程式中為 0.05 秒）决定。 這意味著控制器每 0.05 秒計算新的控制信號並向馬達發送指令.
+adjusted_dt 的計算: 如果模擬運行速度慢於實時(即模擬時間步長大於 0.05 秒), 控制迴路將比模擬更新運行得更快而導致問題, 因為控制器是基於過時的球的位置資料來做出決策的. 因此, adjusted_dt 會根據實際模擬時間步長與預期時間步長（0.05 秒）的比率，對原始 dt 值進行缩放： adjusted_dt = dt * sim.getSimulationTimeStep() / 0.05
+對控制迴路的影響:&lt;/p&gt;
+&lt;p&gt;如果模擬運行速度比預期的慢(模擬時間步長 &amp;gt; 0.05 秒), adjusted_dt 將大於原始 dt. 這將有效地減慢了控制迴路的速度, 使其與模擬更新的速度相匹配.
+通過使控制迴路與模擬速度同步, 控制器更有可能接收到關於球位置的最新資料，從而做出更好的控制決策並提高穩定性.
+優點：&lt;/p&gt;
+&lt;p&gt;減少時序差異： adjusted_dt 有助於減輕控制迴路和模擬之間的時間不匹配, 這可能是不同硬體配置下控制性能差異的重要來源.
+提高穩定性： 通過確保控制迴路以與模擬更新一致的速度運行, 控制器可以做出更明智的決策, 可能導致更好的穩定性和控制精度.
+缺點：&lt;/p&gt;
+&lt;p&gt;非理想解決方案： 雖然 adjusted_dt 可以提高一致性, 但它并不能完全消除模擬速度變化帶來的問題. 其他因素, 例如網路延遲和數值精度, 仍然會導致結果的差異.
+潛在的性能影響： 減慢控制迴路的速度可能會降低系統的響應能力, 尤其是在模擬運行速度明顯慢於實時的情況下.&lt;/p&gt;
+&lt;hr&gt;</content><category term="w7-40923116"></category><category term="協同產品設計實習專案"></category></entry><entry><title>2024 Spring 課程w6</title><link href="./2024-Spring-w6-blog-tutorial-40923116.html" rel="alternate"></link><published>2024-04-12T14:00:00+08:00</published><updated>2024-04-26T06:45:45+08:00</updated><author><name>40923116</name></author><id>tag:None,2024-04-12:./2024-Spring-w6-blog-tutorial-40923116.html</id><summary type="html">&lt;p&gt;內容管理系統.&lt;/p&gt;
+</summary><content type="html">&lt;p&gt;內容管理系統.&lt;/p&gt;
+
+
+&lt;h1&gt;內容管理系統&lt;/h1&gt;
+&lt;p&gt;Close
+Menu&lt;/p&gt;
+&lt;p&gt;About
+Archives
+Categories
+Tags
+ Home
+ Menu
+協同產品設計實習課程
+Kmol | Sun 31 March 2024
+| Updated on Thu 18 April 2024
+Search
+協同產品設計實習的第七週, 正值春假期間, 用來回顧課程內容重點.&lt;/p&gt;
+&lt;p&gt;內容管理系統
+cd2024 2a w8 產品協同架構說明&lt;/p&gt;
+&lt;p&gt;協同產品設計實習課程使用網際內容管理系統, 採 Github Classroom 建立分組倉儲, 並由學員自行利用 cmsimde_site 作為 Github 倉儲的引擎目錄, 利用 Python 執行網頁編輯. 之後再轉檔為靜態網頁, 以便利用 Github Pages 所提供的 WWW 伺服器呈現協同產品設計過程的相關多媒體內容.&lt;/p&gt;
+&lt;p&gt;除了章節式的網站外, cmsimde_site 還額外利用 Pelican 管理使用者所建立的網誌, 以及利用 Reveal 管理使用者所建立的網際簡報.&lt;/p&gt;
+&lt;p&gt;在使用者每週的內容管理過程, 由於必須採用 Python 執行網頁編輯, cd2024 課程採用了四種不同的方法進行, 其中包括 Replit、Codespaces、Gitpod 以及 localhost. 由於前三者屬於雲端作業, 各有不同的使用規定與免費使用權限, 對於多人協同的產品設計團隊而言, 可以根據各自的喜好與環境選擇合用的網頁編輯工具, 且在多方了解下也可透過實際使用發展中的雲端 IDE 環境, 一窺未來可能的 AI 導引前景.&lt;/p&gt;
+&lt;p&gt;從協同設計的架構上, 個人與分組的倉儲中, 總共設計了以下幾種內容的協同模式:&lt;/p&gt;
+&lt;p&gt;分組網站內容的協同 - 其中包括章節式的網站內容與網誌內容, 可以透過 Python 程式方法整合各學員子模組中的 config/content.htm 以及 markdown/*.md 檔案至分組網站中
+分組報告內容的協同 - 採用的是 Github Actions 與近端 MikTeX 中的 xelatex 將 .tex 轉為 pdf 的整合過程
+分組產品設計的 PLM 協同 - 採用的是 Odoo PLM 模組, 讓各分組可以將網站內容、報告內容視為產品, 從協同架構的訂定作為起點, 完成資料展示作為終點, 逐一將過程的協調、派任與執行方法納入 PLM 系統管理
+分組零組件設計的協同 - 分別採用 Solvespace 作為鋼球平衡台範例, 讓學員使用 Siemens NX 1872 進行協同零組件繪圖設計, 並將各零件的 .prt 檔案納入各學員的倉儲進行組立, 以便找出最佳的設計分工以及零組件轉檔流程
+分組模擬場景設計的協同 - 當各分組順利完成鋼球平衡台的零組件轉檔後, 一旦進入 CoppeliaSim 場景後, 必須逐一配置感測器 (Sensors)、致動器 (Actuators) 以及 ZMQ RemoteAPI Python程式, 主要探討如何將此一場景模擬過程在 CoppeliaSim XML 檔案格式與 Siemens NXOpen Python 零件程式檔案間, 找到合用或最佳的協同產品設計模式.
+分組專案簡報設計的協同 - 在上述各產品設計階段所累積的各種資料, 該如何有效整合到專案完成後必須進行的網際簡報中.
+分組網站內容的協同
+各分組網站內容的協同包含:&lt;/p&gt;
+&lt;p&gt;章節式網站內容
+週記式網誌內容
+網際簡報內容
+其中首先要求各組員必須每週在 cd2024 倉儲中的 markdown 目錄編寫 markdown 網誌文章, 再經由 Pelican 轉檔至 blog 目錄中的超文件網誌. 由於 Pelican 採用 Python 檔案進行設定, 因此可以在轉檔的過程中, 將各子目錄中的組員倉儲網誌集合到分組倉儲中的 combined_markdown 目錄之後, 再指定將網誌超文件轉至各分組倉儲的 blog 目錄.&lt;/p&gt;
+&lt;p&gt;由於分組網誌內容協同時, 所有組員所編寫的 markdown 文章必須存入 combined_markdown 目錄, 因此 markdown 網誌文章檔案的命名不可重複, 且各網誌文章的 Slug 字串將會被當作用來命名轉檔後的超文件檔案名稱, 因此也不能重複.&lt;/p&gt;
+&lt;p&gt;至於當各組員採用 Replit 維護個人倉儲內容時, 可以直接從 Replit Connect 至 Github 取得維護倉儲的權限, 旦卻無法直接用管理分組倉儲, 因為各組員雖然擁有管理分組倉儲的權限, 但是無法在 Replit 中以免費的組員帳號管理 Github Classroom 所取得的分組倉儲. 而必須動態納入針對分組倉儲的 OpenSSH 管理權限.&lt;/p&gt;
+&lt;p&gt;分組報告內容的協同
+add_to_content_html.py&lt;/p&gt;
+&lt;p&gt;generate_pages.py&lt;/p&gt;
+&lt;p&gt;um 為 2b-midbg6 分組倉儲中用來 update submodule 的 bash script (電子書: Pro Bash), 設為可執行後, 透過 ./um 就可以將各組員的子模組更到最新版.&lt;/p&gt;
+&lt;p&gt;分組產品設計的 PLM 協同
+Odoo 是一套主要利用 Python 與 Javascript 編寫的網際資料管理系統, 資料庫採用 PostgreSQL, 協同產品設計實習則利用 Odoo 的 PLM 模組執行產品生命週期管理. 在課程第三週時指定由各組員在其個人的 cd2024 倉儲中, 以 LaTeX 格式分工完成下列文章的英文與中文翻譯並列資料, 最後在分組網站的 Release 或 downloads 區完成 2b-midbgx_report.pdf 與 2a-midagx_report.pdf 的製作.&lt;/p&gt;
+&lt;p&gt;其中希望將 LaTeX 報告與 Odoo PLM 參考論文的閱讀及翻譯作為各組協同設計的產品, 各組員可將協同過程中的討論、規則訂定與時程規劃透過 PLM 進行管理.&lt;/p&gt;
+&lt;p&gt;若要在近端使用可攜程式環境編譯分組 LaTeX 報告, 請下載 miktex-portable.7z (需要密碼, 下載 167MB, 解開壓縮檔案後約 1GB) 以及參考資料: latex_images_github.7z (需要密碼)&lt;/p&gt;
+&lt;p&gt;2021 ANALYSIS OF THE ODOO SOFTWARE CAPABILITIES REGARDING PRODUCT LIFECYCLE MANAGEMENT, MANUFACTURING EXECUTION SYSTEMS AND THEIR INTEGRATION.pdf or local download (password required) (Odoo 軟體在產品生命週期管理、製造執行系統及其整合上的功能分析)&lt;/p&gt;
+&lt;p&gt;英文單字查詢: 2021_odoo_reading.html&lt;/p&gt;
+&lt;p&gt;至於在使用 Github 過程中, 若之後希望自行維護 Git server, 則可以從眾多的開源 Git 伺服器中擇一採用.&lt;/p&gt;
+&lt;p&gt;這裡將使用 Gogs 作為範例, 透過 SQlite 以及 PostgreSQL 資料庫製作能在 Windows 操作系統中使用的網際 Git 倉儲管理系統. 並且納入 portable 2024 的可攜程式系統架構, 其中牽涉 portable Gogs 與 portable PostgreSQL 等兩個檔案.&lt;/p&gt;
+&lt;p&gt;分組零組件設計的協同
+Gemini 1.5 Pro 的應用:&lt;/p&gt;
+&lt;p&gt;將綜合遊戲球場的圖片傳給 Gemini 1.5 Pro, 並進行下列提問:&lt;/p&gt;
+&lt;p&gt;這是一個用於四對四個 robot 足球員的競技場, 希望利用 Solvespace 與 Siemens NX 建立能夠踢球進足球門, 並且能挑射球進對手籃球框得分的 robot 球員, 相關尺寸規格如下: 球場參考規格:競技球: 白色, 直徑 0.1m, 重量 0.5kg場地: 長 4m x 寬 2.5m, 外圍以足夠高度之隱形柵欄區隔足球門: 長 0.6m, 高 0.3m, 寬 0.1m籃板: 長 0.3m, 高 0.3m, 寬 0.1m, 位於足球門上方中央籃框: 由籃板向場內距離 0.1m, 內徑 0.2m, 框管直徑 0.02球員尺寸範圍: 長寬高各 0.2m, 重量 5kg, 請問你會如何設計這樣的一組 robot 球員?
+因為 robot 球員機構零組件設計完成後, 需要轉檔進入 CoppeliaSim 完成模擬場景, 且將利用 ZMQ Remote API python 進行後續的球員競技控制, 針對這樣的配置, 你會如何建議?
+我們想要用最簡單有效的 robot 球員設計, 你有甚麼建議?
+假如藉由四輪車前方的撞擊板角度調整, 來推球或將球挑起進行達到踢球與挑球入籃框的動作, 是否合宜, 請協助評估!
+不然, 你還有甚麼容易實現的踢球與挑球機構可供參考?
+cd2024 的鋼球平衡台控制系統擬採用 Solvespace 與 Siemens 繪製, 預計將系統中所需的零組件分別由子模組中的倉儲 downloads 目錄進行儲存, 各組員可以在 Windows 環境完成零件繪圖後, 放入各組員課程倉儲中的 downloads 目錄後, 再統一從分組倉儲 downloads 目錄中的組立檔案引用.&lt;/p&gt;
+&lt;p&gt;過程中再依照相同尺寸與架構規劃, 以隨身碟中的 Siemens NX1872.7z (需要登入 @nfu.edu.tw 後下載) 連網取得授權後進行繪製, 也可採用電腦輔助設計室所安裝的 NX1872 完成繪製.&lt;/p&gt;
+&lt;p&gt;利用 NX 繪製零件過程, 開啟 NXOpen Python Journal 程式的錄製後, 從中擷取設計參數以便在之後的 ECO (Engineering Change Order) 流程中透過參數調控取得新的零組件.&lt;/p&gt;
+&lt;p&gt;以下為 NXOpen Python 的範例程式 (nxopen_block.py, 零件檔案: block.prt):&lt;/p&gt;
+&lt;p&gt;1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87&lt;/p&gt;
+&lt;h1&gt;nxopen_block.py&lt;/h1&gt;
+&lt;h1&gt;導入 NXOpen&lt;/h1&gt;
+&lt;p&gt;import NXOpen
+import NXOpen.UF
+import NXOpen.Gateway&lt;/p&gt;
+&lt;p&gt;def main():
+    # 取得目前開啟的工作階段
+    theSession = NXOpen.Session.GetSession()
+    theUfSession = NXOpen.UF.UFSession.GetUFSession()&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="err"&gt;#&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;建立&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;ListingWindow&lt;/span&gt;
+&lt;span class="n"&gt;listWin&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;theSession&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ListingWindow&lt;/span&gt;
+&lt;span class="err"&gt;#&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;開啟零件檔案&lt;/span&gt;
+&lt;span class="n"&gt;basePart1&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;theSession&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Parts&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;OpenBaseDisplay&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;&amp;quot;c:/tmp/block.prt&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;workPart&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;theSession&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Parts&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="k"&gt;Work&lt;/span&gt;
+&lt;span class="n"&gt;unit1&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;workPart&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;UnitCollection&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;FindObject&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;&amp;quot;MilliMeter&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="err"&gt;#&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;height&lt;/span&gt;
+&lt;span class="n"&gt;p7&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;workPart&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Expressions&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;FindObject&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;&amp;quot;p7&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="err"&gt;#&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;width&lt;/span&gt;
+&lt;span class="n"&gt;p8&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;workPart&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Expressions&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;FindObject&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;&amp;quot;p8&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="err"&gt;#&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;length&lt;/span&gt;
+&lt;span class="n"&gt;p9&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;workPart&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Expressions&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;FindObject&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;&amp;quot;p9&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;workPart&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Expressions&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;EditWithUnits&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;p7&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;unit1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="ss"&gt;&amp;quot;30&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;workPart&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Expressions&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;EditWithUnits&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;p8&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;unit1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="ss"&gt;&amp;quot;60&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;workPart&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Expressions&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;EditWithUnits&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;p9&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;unit1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="ss"&gt;&amp;quot;90&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;theSession&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;UpdateManager&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;DoUpdate&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;#saveStatus1&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;workPart&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;SaveAs&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;&amp;quot;c:/tmp/block_new.prt&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;#saveStatus1&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Dispose&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="err"&gt;#&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;initialize&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;list&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;to&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;hold&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;bodies&lt;/span&gt;
+&lt;span class="n"&gt;theBodyTags&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;[]&lt;/span&gt;
+
+&lt;span class="k"&gt;for&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="ow"&gt;in&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;workPart&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nl"&gt;Bodies&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nl"&gt;IsSolidBody&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;span class="w"&gt;        &lt;/span&gt;&lt;span class="n"&gt;theBodyTags&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;append&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Tag&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="err"&gt;#&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;準備輸出&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nf"&gt;ASCII&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;格式&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;STL&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;零件檔案&lt;/span&gt;
+&lt;span class="n"&gt;sTLCreator1&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;theSession&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;DexManager&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;CreateStlCreator&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="n"&gt;sTLCreator1&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;AutoNormalGen&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;True&lt;/span&gt;
+&lt;span class="n"&gt;sTLCreator1&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ChordalTol&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mf"&gt;0.08&lt;/span&gt;
+&lt;span class="n"&gt;sTLCreator1&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;AdjacencyTol&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mf"&gt;0.08&lt;/span&gt;
+&lt;span class="n"&gt;sTLCreator1&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;OutputFile&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="ss"&gt;&amp;quot;C:\\tmp\\block_ascii.stl&amp;quot;&lt;/span&gt;
+&lt;span class="err"&gt;#&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nc"&gt;Binary&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nl"&gt;STL&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;NXOpen&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;STLCreatorOutputTypeEnum&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nc"&gt;Binary&lt;/span&gt;
+&lt;span class="n"&gt;sTLCreator1&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;OutputType&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;NXOpen&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;STLCreatorOutputTypeEnum&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nc"&gt;Text&lt;/span&gt;
+&lt;span class="err"&gt;#&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;已知&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;body1&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;命名&lt;/span&gt;
+&lt;span class="n"&gt;body1&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;workPart&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Bodies&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;FindObject&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;&amp;quot;EXTRUDE(2)&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;added1&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;sTLCreator1&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ExportSelectionBlock&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="k"&gt;Add&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;body1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;nXObject1&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;sTLCreator1&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="k"&gt;Commit&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="n"&gt;sTLCreator1&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="k"&gt;Destroy&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+
+&lt;span class="err"&gt;#&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;開啟所建立的&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;ListingWindow&lt;/span&gt;
+&lt;span class="n"&gt;listWin&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="k"&gt;Open&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="n"&gt;listWin&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;WriteLine&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;&amp;quot;number of solid bodies: &amp;quot;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nf"&gt;str&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;theBodyTags&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
+
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;massProps&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Stats&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;theUfSession&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Modeling&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;AskMassProps3d&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;theBodyTags&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nf"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;theBodyTags&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mf"&gt;.03&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;0.99,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;listWin&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;WriteLine&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;&amp;quot;units: kg, mm&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;listWin&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;WriteLine&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;&amp;quot;surface area: &amp;quot;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nf"&gt;str&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;massProps&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;0&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="n"&gt;listWin&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;WriteLine&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;&amp;quot;volume: &amp;quot;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nf"&gt;str&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;massProps&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;1&lt;/span&gt;&lt;span class="o"&gt;]*&lt;/span&gt;&lt;span class="mf"&gt;1E9&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="err"&gt;#&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;在&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;ListingWindow&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;中寫入字串&lt;/span&gt;
+&lt;span class="n"&gt;listWin&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;WriteLine&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;&amp;quot;Hello, NXOpen&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;listWin&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="k"&gt;Close&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+
+&lt;span class="err"&gt;#&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;將零件檔案&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;fit&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;之後&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;export&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;出&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;png&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;檔案&lt;/span&gt;
+&lt;span class="n"&gt;theUI&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;NXOpen&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;UI&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;GetUI&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="n"&gt;imageExportBuilder1&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;theUI&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;CreateImageExportBuilder&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+
+&lt;span class="n"&gt;custombackgroundcolor1&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;None&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;
+&lt;span class="n"&gt;custombackgroundcolor1&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;0&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mf"&gt;1.0&lt;/span&gt;
+&lt;span class="n"&gt;custombackgroundcolor1&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;1&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mf"&gt;1.0&lt;/span&gt;
+&lt;span class="n"&gt;custombackgroundcolor1&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;2&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mf"&gt;1.0&lt;/span&gt;
+
+&lt;span class="n"&gt;imageExportBuilder1&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;SetCustomBackgroundColor&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;custombackgroundcolor1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;imageExportBuilder1&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;FileFormat&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;NXOpen&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Gateway&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ImageExportBuilder&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;FileFormats&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Png&lt;/span&gt;
+&lt;span class="n"&gt;imageExportBuilder1&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;FileName&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="ss"&gt;&amp;quot;c:\\tmp\\block.png&amp;quot;&lt;/span&gt;
+
+&lt;span class="n"&gt;imageExportBuilder1&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;BackgroundOption&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;NXOpen&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Gateway&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ImageExportBuilder&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;BackgroundOptions&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Original&lt;/span&gt;
+
+&lt;span class="n"&gt;imageExportBuilder1&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;EnhanceEdges&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;False&lt;/span&gt;
+&lt;span class="n"&gt;imageExportBuilder1&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;RegionMode&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;False&lt;/span&gt;
+&lt;span class="err"&gt;#&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;fit&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;view&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;後&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;commit&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;export&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;png&lt;/span&gt;
+&lt;span class="n"&gt;workPart&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ModelingViews&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;WorkView&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Fit&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="n"&gt;nXObject6&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;imageExportBuilder1&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="k"&gt;Commit&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+
+&lt;span class="n"&gt;imageExportBuilder1&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="k"&gt;Destroy&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;if &lt;strong&gt;name&lt;/strong&gt; == "&lt;strong&gt;main&lt;/strong&gt;":
+    main()
+NXOpen Python Ref&lt;/p&gt;
+&lt;p&gt;分組模擬場景設計的協同
+當各分組完成鋼球平衡台控制系統所需的零組件繪製, 可轉為 STL 格式後轉入 CoppeliaSim 環境中建立模擬場景, 過程中除了必須設置相關感測器外, 預計採用 ZMQ Remote API Python 進行遠端控制.&lt;/p&gt;
+&lt;p&gt;由於 CoppeliaSim 的模擬場景支援 XML 格式輸出, 因此進行中的鋼求平衡台控制系統模擬場景可將 STL 格式的零組件檔案放入各組員課程倉儲中的 downloads 目錄中, 再設法整合至各分組的系統模擬場景.&lt;/p&gt;
+&lt;p&gt;ball_beam_balancing_PID_control_coppeliasim_1d_and_2d.7z (password required to download)&lt;/p&gt;
+&lt;p&gt;Solvespace_model _2d_for_cd2024_w6.7z&lt;/p&gt;
+&lt;p&gt;2019 Construction and theoretical study of a ball balancing platform.pdf (local download, 需要密碼)&lt;/p&gt;
+&lt;p&gt;分組專案簡報設計的協同
+cd2024 的網際簡報採用 Reveal, 最後的分組專案簡報擬分別由組員提供簡報所需的 Markdown 格式內容後, 再設法利用程式進行轉檔為分組專案簡報內容.&lt;/p&gt;
+&lt;p&gt;導入 AI 的流程
+初步使用 ChatGPT 3.5: https://chat.openai.com/ 可用來回答一般問題, 取得簡單的程式或設計參考意見.&lt;/p&gt;
+&lt;p&gt;中階以上的問題, 則可透過 Gemini Pro 與 Claude 3 (每日限量) 對話, 取得進階參考意見.&lt;/p&gt;
+&lt;p&gt;以上三者都可以經由 Gmail 帳號登入.&lt;/p&gt;
+&lt;p&gt;Gemini Pro 應用:&lt;/p&gt;
+&lt;p&gt;將 Odoo 參考論文 上傳後, 要求逐段翻譯, 並且給出文章摘要, 或者列出重要的英文術語說明. (摘要內容: 本文分析了 Odoo 軟體在產品生命週期管理 (PLM) 和製造執行系統 (MES) 整合方面的能力，並透過模擬虛構公司驗證其應用效果。)&lt;/p&gt;
+&lt;p&gt;Odoo 參考論文各章節重點內容摘要：&lt;/p&gt;
+&lt;p&gt;第一章：緒論&lt;/p&gt;
+&lt;p&gt;論文目標：探討 Odoo 軟體在產品生命週期管理 (PLM) 和製造執行系統 (MES) 整合方面的能力。&lt;/p&gt;
+&lt;p&gt;論文結構：概述論文的各章節內容和組織方式。&lt;/p&gt;
+&lt;p&gt;研究動機：探討 Odoo 作為一個開源 ERP 軟體，在 PLM 和 MES 領域的適用性，特別是對小型企業和新創公司。&lt;/p&gt;
+&lt;p&gt;第二章：理論基礎&lt;/p&gt;
+&lt;p&gt;產品生命週期管理 (PLM)：&lt;/p&gt;
+&lt;p&gt;定義：管理產品整個生命週期中所有資訊的組織流程。&lt;/p&gt;
+&lt;p&gt;重點：追踪和管理產品的變更，以提高效率和減少浪費。&lt;/p&gt;
+&lt;p&gt;方法：使用數位專案虛擬化產品生命週期的每一層面，並通過元數據關聯和追蹤資訊。&lt;/p&gt;
+&lt;p&gt;企業資源規劃 (ERP)：&lt;/p&gt;
+&lt;p&gt;定義：涵蓋企業運營的每一層面，例如生產、銷售、服務、庫存管理、財務等。&lt;/p&gt;
+&lt;p&gt;重點：處理交易和訂單，控制資源的投入、存儲和輸出。&lt;/p&gt;
+&lt;p&gt;特點：模組化結構，易於與其他系統整合。&lt;/p&gt;
+&lt;p&gt;製造執行系統 (MES)：&lt;/p&gt;
+&lt;p&gt;定義：連接管理層和生產層的通訊層，負責即時數據收集和處理。&lt;/p&gt;
+&lt;p&gt;重點：提供有關產品和生產過程的即時數據，例如生產數量、品質控管數據等。&lt;/p&gt;
+&lt;p&gt;功能：包括數據搜集、生產排程、品質管理等。&lt;/p&gt;
+&lt;p&gt;工業4.0：&lt;/p&gt;
+&lt;p&gt;定義：以數位連接和生產的深度融合為特徵的第四次工業革命。&lt;/p&gt;
+&lt;p&gt;關鍵技術：物聯網 (IoT)、雲端運算、資訊物理系統 (CPS)。&lt;/p&gt;
+&lt;p&gt;影響：推動生產過程的靈活性和客製化，增加對 PLM-MES 系統的需求。&lt;/p&gt;
+&lt;p&gt;第三章：PLM 和 MES 的整合&lt;/p&gt;
+&lt;p&gt;整合目標：提高產品品質、縮短產品上市時間、最佳化生產流程。&lt;/p&gt;
+&lt;p&gt;整合方法：&lt;/p&gt;
+&lt;p&gt;資料庫整合：將 PLM 和 MES 系統的數據儲存在同一個資料庫中。&lt;/p&gt;
+&lt;p&gt;中介軟體：使用中介軟體連接 PLM 和 MES 系統，並實現數據交換。&lt;/p&gt;
+&lt;p&gt;網路服務架構：使用基於網路技術的數據交換，例如 Web 服務。&lt;/p&gt;
+&lt;p&gt;第四章：公司和產品介紹&lt;/p&gt;
+&lt;p&gt;案例公司：一家虛構的小型製造企業，使用塑料射出成型作為主要生產方式，並採用增材製造和快速原型製作作為商業策略的一部分。&lt;/p&gt;
+&lt;p&gt;案例產品：一款由三部分組成的塑料小型電腦機殼。&lt;/p&gt;
+&lt;p&gt;研究重點：分析 Odoo 軟體在產品開發、原型製作和生產過程改進方面的能力。&lt;/p&gt;
+&lt;p&gt;第五章：Odoo 軟體&lt;/p&gt;
+&lt;p&gt;Odoo 概述：&lt;/p&gt;
+&lt;p&gt;商業管理軟體，具有開源社群背景。&lt;/p&gt;
+&lt;p&gt;模組化結構，提供豐富的應用程式和擴展功能。&lt;/p&gt;
+&lt;p&gt;支持本地安裝和雲端託管。&lt;/p&gt;
+&lt;p&gt;Odoo 的製造功能：&lt;/p&gt;
+&lt;p&gt;基於 ERP 系統，涵蓋產品設計、生產計畫、物料管理、庫存管理等方面。&lt;/p&gt;
+&lt;p&gt;使用“項目”虛擬化產品生命週期的每一層面，例如產品、BOM、操作、工作中心等。&lt;/p&gt;
+&lt;p&gt;通過工程變更訂單 (ECO) 追蹤和管理產品和制程的變更。&lt;/p&gt;
+&lt;p&gt;實驗設置：&lt;/p&gt;
+&lt;p&gt;使用 Odoo 企業版的線上試用版本進行模擬。&lt;/p&gt;
+&lt;p&gt;創建虛擬公司結構，包括用戶、工作中心和設備。&lt;/p&gt;
+&lt;p&gt;第六章：Odoo 在 PLM 和 MES 方面的表現&lt;/p&gt;
+&lt;p&gt;專案管理：&lt;/p&gt;
+&lt;p&gt;Odoo 提供多種類型專案，但對開發階段的支援較為不足。&lt;/p&gt;
+&lt;p&gt;文件管理功能有限，需要通過 ECO 變通。&lt;/p&gt;
+&lt;p&gt;產品和制程創建：&lt;/p&gt;
+&lt;p&gt;創建過程簡單易懂。&lt;/p&gt;
+&lt;p&gt;BOM 和產品項目之間的整合良好。&lt;/p&gt;
+&lt;p&gt;產品和制程改進：&lt;/p&gt;
+&lt;p&gt;使用 ECO 管理變更，並提供版本控制功能。&lt;/p&gt;
+&lt;p&gt;數據反饋主要基於生產訂單，缺乏對產品版本的區分。&lt;/p&gt;
+&lt;p&gt;數據查詢：&lt;/p&gt;
+&lt;p&gt;提供多種數據報告選項，但缺乏對 PLM 數據的視覺化支援。&lt;/p&gt;
+&lt;p&gt;第七章：結論&lt;/p&gt;
+&lt;p&gt;Odoo 軟體可以作為小型企業的 PLM 和 MES 解決方案，但存在一些限制，例如文件管理和數據視覺化方面的不足。&lt;/p&gt;
+&lt;p&gt;Odoo 適用於 PLM 和 MES 需求規模較小或製造工序較少的企業。&lt;/p&gt;
+&lt;p&gt;Odoo 的優勢在於其可擴展性和整合性，以及與 ERP 功能的深度整合。&lt;/p&gt;
+&lt;p&gt;針對以上課程內容, 請利用以下留言系統進行討論:&lt;/p&gt;
+&lt;p&gt;w7collaborative
+協同產品設計實習專案
+協同產品設計實習的專案實習, 透過 ChatGPT、Gemini 1.5 Pro 與 Claude 3 的協助下進行.&lt;/p&gt;
+&lt;p&gt;協同產品設計實習2a-6
+協同產品設計實習的第六週, 說明協同 NX 零組件繪圖以及 CoppeliaSim 場景模擬相關檔案格式.&lt;/p&gt;
+&lt;p&gt;Theme AttilaPublished with Pelican&lt;/p&gt;
+&lt;hr&gt;</content><category term="w6-40923116"></category><category term="內容管理系統"></category></entry><entry><title>2024 Spring 課程w5</title><link href="./2024-Spring-w5-blog-tutorial-40923116.html" rel="alternate"></link><published>2024-03-29T14:00:00+08:00</published><updated>2024-04-26T06:38:50+08:00</updated><author><name>40923116</name></author><id>tag:None,2024-03-29:./2024-Spring-w5-blog-tutorial-40923116.html</id><summary type="html">&lt;p&gt;Github Actions 帶有子模組的 main.yml 設定.&lt;/p&gt;
 </summary><content type="html">&lt;p&gt;Github Actions 帶有子模組的 main.yml 設定.&lt;/p&gt;
 
 
@@ -135,19 +884,19 @@ cd2024 2a w6 取下子模組, 以及更新學員倉儲內容&lt;/p&gt;
 &lt;p&gt;協同產品設計實習2b-6
 協同產品設計實習的第六週, 說明協同 NX 零組件繪圖以及 CoppeliaSim 場景模擬相關檔案格式.&lt;/p&gt;
 &lt;p&gt;Theme AttilaPublished with Pelican&lt;/p&gt;
-&lt;hr&gt;</content><category term="w5-40923116"></category><category term="Github Actions 帶有子模組的 main.yml 設定40923116"></category></entry><entry><title>2024 Spring 課程w4</title><link href="./2024-Spring-w4-blog-tutorial-40923116.html" rel="alternate"></link><published>2024-03-22T14:00:00+08:00</published><updated>2024-04-17T06:20:33+08:00</updated><author><name>40923116</name></author><id>tag:None,2024-03-22:./2024-Spring-w4-blog-tutorial-40923116.html</id><summary type="html">&lt;p&gt;將組員的個人倉儲設為分組倉儲子模組.&lt;/p&gt;
+&lt;hr&gt;</content><category term="w5-40923116"></category><category term="Github Actions 帶有子模組的 main.yml 設定"></category></entry><entry><title>2024 Spring 課程w4</title><link href="./2024-Spring-w4-blog-tutorial-40923116.html" rel="alternate"></link><published>2024-03-22T14:00:00+08:00</published><updated>2024-04-26T06:38:56+08:00</updated><author><name>40923116</name></author><id>tag:None,2024-03-22:./2024-Spring-w4-blog-tutorial-40923116.html</id><summary type="html">&lt;p&gt;將組員的個人倉儲設為分組倉儲子模組.&lt;/p&gt;
 </summary><content type="html">&lt;p&gt;將組員的個人倉儲設為分組倉儲子模組.&lt;/p&gt;
 
 
 &lt;h1&gt;將組員的個人倉儲設為分組倉儲子模組&lt;/h1&gt;
 &lt;p&gt;將組員的個人倉儲設為分組倉儲子模組。&lt;/p&gt;
-&lt;hr&gt;</content><category term="w4-40923116"></category><category term="將組員的個人倉儲設為分組倉儲子模組40923116"></category></entry><entry><title>2024 Spring 課程w3</title><link href="./2024-Spring-w3-blog-tutorial-40923116.html" rel="alternate"></link><published>2024-03-15T14:00:00+08:00</published><updated>2024-04-17T06:21:44+08:00</updated><author><name>40923116</name></author><id>tag:None,2024-03-15:./2024-Spring-w3-blog-tutorial-40923116.html</id><summary type="html">&lt;p&gt;製作及統整上課影片.&lt;/p&gt;
+&lt;hr&gt;</content><category term="w4-40923116"></category><category term="將組員的個人倉儲設為分組倉儲子模組"></category></entry><entry><title>2024 Spring 課程w3</title><link href="./2024-Spring-w3-blog-tutorial-40923116.html" rel="alternate"></link><published>2024-03-15T14:00:00+08:00</published><updated>2024-04-26T06:39:01+08:00</updated><author><name>40923116</name></author><id>tag:None,2024-03-15:./2024-Spring-w3-blog-tutorial-40923116.html</id><summary type="html">&lt;p&gt;製作及統整上課影片.&lt;/p&gt;
 </summary><content type="html">&lt;p&gt;製作及統整上課影片.&lt;/p&gt;
 
 
 &lt;h1&gt;利用capcut去製作上課影片&lt;/h1&gt;
 &lt;p&gt;利用剪接軟體capcut去製作及統整上課影片，並上字幕。&lt;/p&gt;
-&lt;hr&gt;</content><category term="w3-40923116"></category><category term="上課影片製作及上字幕40923116"></category></entry><entry><title>2024 Spring 課程 w2</title><link href="./2024-Spring-w2-blog-tutorial-40923116.html" rel="alternate"></link><published>2024-03-08T14:00:00+08:00</published><updated>2024-04-17T06:22:03+08:00</updated><author><name>40923116</name></author><id>tag:None,2024-03-08:./2024-Spring-w2-blog-tutorial-40923116.html</id><summary type="html">&lt;p&gt;利用 codespaces 維護分組網站.&lt;/p&gt;
+&lt;hr&gt;</content><category term="w3-40923116"></category><category term="上課影片製作及上字幕"></category></entry><entry><title>2024 Spring 課程 w2</title><link href="./2024-Spring-w2-blog-tutorial-40923116.html" rel="alternate"></link><published>2024-03-08T14:00:00+08:00</published><updated>2024-04-26T06:39:06+08:00</updated><author><name>40923116</name></author><id>tag:None,2024-03-08:./2024-Spring-w2-blog-tutorial-40923116.html</id><summary type="html">&lt;p&gt;利用 codespaces 維護分組網站.&lt;/p&gt;
 </summary><content type="html">&lt;p&gt;利用 codespaces 維護分組網站.&lt;/p&gt;
 
 
@@ -155,7 +904,7 @@ cd2024 2a w6 取下子模組, 以及更新學員倉儲內容&lt;/p&gt;
 &lt;p&gt;分組利用github去試推與test到分組網站&lt;/p&gt;
 &lt;p&gt;學習到協同不一樣的技能&lt;/p&gt;
 &lt;p&gt;&lt;img alt="image" src="image.png"&gt;&lt;/p&gt;
-&lt;hr&gt;</content><category term="w2-40923116"></category><category term="網誌編寫"></category><category term="codespaces40923116"></category></entry><entry><title>2024 Spring 課程 w1</title><link href="./2024-Spring-w1-blog-tutorial-40923116.html" rel="alternate"></link><published>2024-03-01T14:00:00+08:00</published><updated>2024-04-17T06:23:04+08:00</updated><author><name>40923116</name></author><id>tag:None,2024-03-01:./2024-Spring-w1-blog-tutorial-40923116.html</id><summary type="html">&lt;p&gt;2024 Spring 網際內容管理與協同產品設計實習課程教學導引.&lt;/p&gt;
+&lt;hr&gt;</content><category term="w2-40923116"></category><category term="網誌編寫"></category><category term="codespaces"></category></entry><entry><title>2024 Spring 課程 w1</title><link href="./2024-Spring-w1-blog-tutorial-40923116.html" rel="alternate"></link><published>2024-03-01T14:00:00+08:00</published><updated>2024-04-26T06:39:10+08:00</updated><author><name>40923116</name></author><id>tag:None,2024-03-01:./2024-Spring-w1-blog-tutorial-40923116.html</id><summary type="html">&lt;p&gt;2024 Spring 網際內容管理與協同產品設計實習課程教學導引.&lt;/p&gt;
 </summary><content type="html">&lt;p&gt;2024 Spring 網際內容管理與協同產品設計實習課程教學導引.&lt;/p&gt;
 
 
@@ -419,4 +1168,4 @@ doc["threejsblock"].bind("click", threejsblock.do)
 &lt;div id="brython_div2"&gt;&lt;/div&gt;
 &lt;!-- editor2 結束 --&gt;
 &lt;hr/&gt;&lt;p&gt;
-&lt;script src="https://unpkg.com/three@0.144.0/build/three.js" type="text/javascript"&gt;&lt;/script&gt;</content><category term="w1-40923116"></category><category term="網誌編寫"></category><category term="pelican40923116"></category></entry></feed>
+&lt;script src="https://unpkg.com/three@0.144.0/build/three.js" type="text/javascript"&gt;&lt;/script&gt;</content><category term="w1-40923116"></category><category term="網誌編寫"></category><category term="pelican"></category></entry></feed>
