@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>協同產品設計實習</title><link href="./" rel="alternate"></link><link href="./feeds/all.atom.xml" rel="self"></link><id>./</id><updated>2024-06-07T06:04:31+08:00</updated><entry><title>2024 Spring 課程 w15</title><link href="./2024-Spring-w15-blog-tutorial-40923116.html" rel="alternate"></link><published>2024-05-31T14:00:00+08:00</published><updated>2024-06-07T06:04:21+08:00</updated><author><name>40923116</name></author><id>tag:None,2024-05-31:./2024-Spring-w15-blog-tutorial-40923116.html</id><summary type="html">&lt;p&gt;cd2023 足球機器人網際場景模擬&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>協同產品設計實習</title><link href="./" rel="alternate"></link><link href="./feeds/all.atom.xml" rel="self"></link><id>./</id><updated>2024-06-07T14:00:00+08:00</updated><entry><title>2024 Spring 課程 w16</title><link href="./2024-Spring-w16-blog-tutorial-40923116.html" rel="alternate"></link><published>2024-06-07T14:00:00+08:00</published><updated>2024-06-07T08:25:26+08:00</updated><author><name>40923116</name></author><id>tag:None,2024-06-07:./2024-Spring-w16-blog-tutorial-40923116.html</id><summary type="html">&lt;p&gt;python改成3.7.1的方法、使用程式操控平衡台&lt;/p&gt;
+</summary><content type="html">&lt;p&gt;python改成3.7.1的方法、使用程式操控平衡台&lt;/p&gt;
+
+
+&lt;h1&gt;python改版、程式操控平衡台&lt;/h1&gt;
+&lt;p&gt;操作影片
+改成3.7.1的方法:
+https://youtu.be/pGFrn59d0tU?si=ftLnsh0pL6tNgGra&lt;/p&gt;
+&lt;p&gt;使用程式操控平衡台
+https://youtu.be/Xay66za1c7w?si=hNYOhGjTK-o77K1g&lt;/p&gt;
+&lt;hr&gt;</content><category term="w16-40923116"></category><category term="使用程式操控平衡台"></category></entry><entry><title>2024 Spring 課程 w15</title><link href="./2024-Spring-w15-blog-tutorial-40923116.html" rel="alternate"></link><published>2024-05-31T14:00:00+08:00</published><updated>2024-06-07T08:23:30+08:00</updated><author><name>40923116</name></author><id>tag:None,2024-05-31:./2024-Spring-w15-blog-tutorial-40923116.html</id><summary type="html">&lt;p&gt;cd2023 足球機器人網際場景模擬&lt;/p&gt;
 </summary><content type="html">&lt;p&gt;cd2023 足球機器人網際場景模擬&lt;/p&gt;
 
 
@@ -7,7 +17,7 @@
 &lt;p&gt;從 https://github.com/mdecd2023/2a3-pj3ag4 下載當時所完成的倉儲資料, 參考網際手足球機器人場景設計專案報告, 由我們擔任場景競技球員, 利用鍵盤操控足球機器人.&lt;/p&gt;
 &lt;p&gt;操作影片網址:
 https://youtu.be/2slNuSwqu60?si=qUF24PNC6jquQmBE&lt;/p&gt;
-&lt;hr&gt;</content><category term="w15-40923116"></category><category term="Python 解譯系統"></category></entry><entry><title>2024 Spring 課程 w14</title><link href="./2024-Spring-w14-blog-tutorial-40923116.html" rel="alternate"></link><published>2024-05-24T14:00:00+08:00</published><updated>2024-06-07T06:04:31+08:00</updated><author><name>40923116</name></author><id>tag:None,2024-05-24:./2024-Spring-w14-blog-tutorial-40923116.html</id><summary type="html">&lt;p&gt;NX 1872 繪製鋼球平衡台所需的零組件&lt;/p&gt;
+&lt;hr&gt;</content><category term="w15-40923116"></category><category term="足球機器人網際場景模擬"></category></entry><entry><title>2024 Spring 課程 w14</title><link href="./2024-Spring-w14-blog-tutorial-40923116.html" rel="alternate"></link><published>2024-05-24T14:00:00+08:00</published><updated>2024-06-07T08:23:21+08:00</updated><author><name>40923116</name></author><id>tag:None,2024-05-24:./2024-Spring-w14-blog-tutorial-40923116.html</id><summary type="html">&lt;p&gt;NX 1872 繪製鋼球平衡台所需的零組件&lt;/p&gt;
 </summary><content type="html">&lt;p&gt;NX 1872 繪製鋼球平衡台所需的零組件&lt;/p&gt;
 
 
@@ -16,7 +26,7 @@ https://youtu.be/2slNuSwqu60?si=qUF24PNC6jquQmBE&lt;/p&gt;
 &lt;p&gt;影片網址:
 https://youtu.be/3dpD9yNZ7IA?si=Yksuqsz6ZDMOk11p
 https://youtu.be/LInhkkFguaM?si=5plGPS2wspyzWYST&lt;/p&gt;
-&lt;hr&gt;</content><category term="w14-40923116"></category><category term="Python 解譯系統"></category></entry><entry><title>2024 Spring 課程 w13</title><link href="./2024-Spring-w13-blog-tutorial-40923116.html" rel="alternate"></link><published>2024-05-17T14:00:00+08:00</published><updated>2024-05-17T06:29:34+08:00</updated><author><name>40923116</name></author><id>tag:None,2024-05-17:./2024-Spring-w13-blog-tutorial-40923116.html</id><summary type="html">&lt;p&gt;利用 gen_py3123_portable.py 在上列舊版的 Python 可攜環境執行, 可在 C:\tmp 建立最基本的可攜 Python3123 程式目錄.&lt;/p&gt;
+&lt;hr&gt;</content><category term="w14-40923116"></category><category term="繪製鋼球平衡台所需的零組件"></category></entry><entry><title>2024 Spring 課程 w13</title><link href="./2024-Spring-w13-blog-tutorial-40923116.html" rel="alternate"></link><published>2024-05-17T14:00:00+08:00</published><updated>2024-05-17T06:29:34+08:00</updated><author><name>40923116</name></author><id>tag:None,2024-05-17:./2024-Spring-w13-blog-tutorial-40923116.html</id><summary type="html">&lt;p&gt;利用 gen_py3123_portable.py 在上列舊版的 Python 可攜環境執行, 可在 C:\tmp 建立最基本的可攜 Python3123 程式目錄.&lt;/p&gt;
 </summary><content type="html">&lt;p&gt;利用 gen_py3123_portable.py 在上列舊版的 Python 可攜環境執行, 可在 C:\tmp 建立最基本的可攜 Python3123 程式目錄.&lt;/p&gt;
 
 
