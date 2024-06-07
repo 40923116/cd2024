@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>協同產品設計實習 - w15-40923116</title><link href="./" rel="alternate"></link><link href="./feeds/w15-40923116.atom.xml" rel="self"></link><id>./</id><updated>2024-06-07T06:04:21+08:00</updated><entry><title>2024 Spring 課程 w15</title><link href="./2024-Spring-w15-blog-tutorial-40923116.html" rel="alternate"></link><published>2024-05-31T14:00:00+08:00</published><updated>2024-06-07T06:04:21+08:00</updated><author><name>40923116</name></author><id>tag:None,2024-05-31:./2024-Spring-w15-blog-tutorial-40923116.html</id><summary type="html">&lt;p&gt;cd2023 足球機器人網際場景模擬&lt;/p&gt;
+</summary><content type="html">&lt;p&gt;cd2023 足球機器人網際場景模擬&lt;/p&gt;
+
+
+&lt;h1&gt;cd2023 足球機器人網際場景模擬&lt;/h1&gt;
+&lt;p&gt;從 https://github.com/mdecd2023/2a3-pj3ag4 下載當時所完成的倉儲資料, 參考網際手足球機器人場景設計專案報告, 由我們擔任場景競技球員, 利用鍵盤操控足球機器人.&lt;/p&gt;
+&lt;p&gt;操作影片網址:
+https://youtu.be/2slNuSwqu60?si=qUF24PNC6jquQmBE&lt;/p&gt;
+&lt;hr&gt;</content><category term="w15-40923116"></category><category term="Python 解譯系統"></category></entry></feed>
